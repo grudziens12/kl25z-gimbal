@@ -1,3 +1,3 @@
-*#### KL25Z Gimball Project
-  *##test
+* #### KL25Z Gimball Project
+  * ##test
 
