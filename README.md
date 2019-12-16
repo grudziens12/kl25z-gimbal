@@ -11,4 +11,4 @@
  * ### Plan Realizacji
  #### Cały układ będzie zasilany z baterii 9V i umieszczony w obudowie wykonanej za pomocą drukarki 3D. Wykorzystana zostanie płytka rozwojowa *FRDM-KL25Z*, dwa sterowniki *ULN2003*, dwa silniki krokowe *28BYJ-48–5V*. Zostanie również wykorzystany przełącznik umożliwiający włączanie i wyłączanie urządzenia. Ze względu na zasilanie bateryjne, oprogramowanie mikrokontrolera zostanie zoptymalizowane pod względem zużycia energii.
  * ### Schemat blokowy
- ![](Diagram.png)
+ ![](diagramb.png)
