@@ -18,12 +18,13 @@
 	} motorState;
 
 	static const uint16_t fullRotation = 2048;
-	static const uint16_t delay = 12000;
+	static const uint32_t delay = 50000;
+	extern const double angle_by_step;
 	
 	void motorInitialize(void);
 	void motorService(motorState currentState, uint8_t whichMotor);
 	void nextMotorState(uint8_t direction, uint8_t whichMotor);
 	void turnMotorOff(uint8_t whichMotor);
 	void clearMotorPins(uint8_t whichMotor);
-	void rotateAngle(uint8_t whichMotor, uint8_t direction, float angle);
+	void rotateAngle(uint8_t whichMotor, double angle);
 #endif

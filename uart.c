@@ -4,7 +4,7 @@ Baud Rate = 9600
 */
 #include "uart.h"
 
-volatile uint8_t acc_read = 30;
+
 
 void uartInitialize(){
 	SIM->SCGC4 |= (SIM_SCGC4_UART0_MASK);

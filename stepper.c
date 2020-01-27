@@ -2,6 +2,7 @@
 
 motorState motor1State = MOTOROFF;
 motorState motor2State = MOTOROFF;
+const double angle_by_step = 360.0/2048.0;
 
 void motorInitialize(void){
 	
@@ -146,8 +147,17 @@ void clearMotorPins(uint8_t whichMotor){
 	PTB->PCOR |= (1UL << MOTORPIN4(whichMotor));
 }
 
-void rotateAngle(uint8_t whichMotor, uint8_t direction, float angle){
-	uint16_t numberOfSteps = ((fullRotation*angle)/360.0);
+void rotateAngle(uint8_t whichMotor, double angle){
+	uint16_t numberOfSteps;
+	uint8_t direction;
+	if(angle < 0.0){
+		angle = -angle;
+		direction = 0;
+	}
+	else{
+		direction = 1;
+	}
+	numberOfSteps = (uint16_t)(((double)fullRotation*angle)/360.0);
 	for(int i=0; i<numberOfSteps;++i){
 		nextMotorState(direction, whichMotor);
 		for(int k=0; k<=delay; ++k);

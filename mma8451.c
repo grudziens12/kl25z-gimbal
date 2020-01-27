@@ -8,8 +8,8 @@ void mma8451_initialize(void){
 	if(mma8451_read( MMA8451_ID, WHOAMI_REG) == WHOAMI){
 		i2c_Pause(100);	
 		mma8451_write(MMA8451_ID, CTRL_REG4, 0x01);	// set interrupt 2
-		//i2c_Pause(100);
-		//mma8451_write(MMA8451_ID, 0x0E, 0x10);	// set high-pass filter active
+	//	i2c_Pause(100);
+	//	mma8451_write(MMA8451_ID, 0x0E, 0x03);	// set range 8g
 		i2c_Pause(100);
 		mma8451_write(MMA8451_ID, CTRL_REG1, 0x01);	// set mma8451 active
 	}		  
@@ -59,9 +59,10 @@ uint8_t mma8451_read(uint8_t slave_address, uint8_t register_address){
 
 	return result;
 }
-void mma8451_read_all_axes(uint8_t slave_address, uint8_t register_address, uint8_t *dataptr){
+void mma8451_read_all_axes(uint8_t slave_address, uint8_t register_address, acc_data_int* result){
 	
-	int i = 0;
+	uint8_t i = 0;
+	uint8_t reading;
 	
 	// read setup
 	
@@ -86,13 +87,35 @@ void mma8451_read_all_axes(uint8_t slave_address, uint8_t register_address, uint
 		else{
 			i2c_Ack;
 		}
-		*dataptr = i2c_Read();     // dummy read
+		reading = i2c_Read();     // dummy read
 		i2c_Wait();
 		if(5 == i){		// last reading - send stop
 			i2c_Stop();
 		}
-		*dataptr = i2c_Read(); 
-		++dataptr;
+		reading = i2c_Read(); 
+		switch(i){
+			case 0:
+				result->X_MSB = reading;
+				break;
+			case 1: 
+				result->X_LSB = reading;
+				break;
+			case 2: 
+				result->Y_MSB = reading;
+				break;
+			case 3: 
+				result->Y_LSB = reading;
+				break;
+			case 4: 
+				result->Z_MSB = reading;
+				break;
+			case 5: 
+				result->Z_LSB = reading;
+				break;
+			default:
+				
+				break;
+		}
 	}
 }
 
