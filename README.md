@@ -1,5 +1,5 @@
 * # KL25Z Gimbal Project
-[Link do prezentacji działania gimballa](https://drive.google.com/open?id=1PFlSzY1KPIIvvN_MNLta38W7y1LIOueR)
+[Link do prezentacji działania gimbala](https://drive.google.com/open?id=1PFlSzY1KPIIvvN_MNLta38W7y1LIOueR)
  * ### Opis projektu
   #### Celem projektu było stworzenie urządzenia do stabilizacji nagrywanego obrazu za pomocą akcelerometru *MMA8451Q* wbudowanego w płytkę rozwojową *FRDM-KL25Z*.
   #### Na podstawie wskazań akcelerometru komunikującego się z mikrokontrolerem za pomocą magistrali *I2C* procesor komunikuje się z zewnętrznymi sterownikami *ULN2003* dwóch silników krokowych *28BYJ-48–5V*, które swoją pracą utrzymują stabilną pozycję urządzenia nagrywającego  kompensując zewnętrzne ruchy ramienia osoby nagrywającej.
