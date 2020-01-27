@@ -157,7 +157,7 @@ void rotateAngle(uint8_t whichMotor, double angle){
 	else{
 		direction = 1;
 	}
-	numberOfSteps = (uint16_t)(((double)fullRotation*angle)/360.0);
+	numberOfSteps = (uint16_t)(((double)fullpitch_rotation*angle)/360.0);
 	for(int i=0; i<numberOfSteps;++i){
 		nextMotorState(direction, whichMotor);
 		for(int k=0; k<=delay; ++k);

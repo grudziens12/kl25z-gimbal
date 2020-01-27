@@ -9,7 +9,7 @@ void mma8451_initialize(void){
 		i2c_Pause(100);	
 		mma8451_write(MMA8451_ID, CTRL_REG4, 0x01);	// set interrupt 2
 	//	i2c_Pause(100);
-	//	mma8451_write(MMA8451_ID, 0x0E, 0x03);	// set range 8g
+		//mma8451_write(MMA8451_ID, 0x0E, 0x02);	// set range 8g
 		i2c_Pause(100);
 		mma8451_write(MMA8451_ID, CTRL_REG1, 0x01);	// set mma8451 active
 	}		  

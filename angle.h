@@ -5,6 +5,7 @@
 #include "stepper.h"
 #include "MKL25Z4.h"
 #include "mma8451.h"
+#include "atan_lut.h"
 
 #define PREVIOUS 0
 #define PRESENT 1
@@ -14,6 +15,7 @@
 extern volatile double pitches[2];
 extern volatile double rolls[2];
 
+double lut_atan(double y, double x);
 double FastArcTan(double x);
 double cal_pitch(acc_data_double* data);
 double cal_roll(acc_data_double* data);

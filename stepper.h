@@ -17,7 +17,7 @@
 			MOTORSTATE1, MOTORSTATE2, MOTORSTATE3, MOTORSTATE4, MOTOROFF
 	} motorState;
 
-	static const uint16_t fullRotation = 2048;
+	static const uint16_t fullpitch_rotation = 2048;
 	static const uint32_t delay = 50000;
 	extern const double angle_by_step;
 	

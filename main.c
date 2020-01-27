@@ -2,12 +2,14 @@
 
 volatile uint8_t acc_read = 30;
 double pitch_angle = 0.0;
-uint8_t rotation = 0;
+double roll_angle = 0.0;
+uint8_t pitch_rotation = 0;
+uint8_t roll_rotation = 0;
 acc_data_types acc_readings;
-volatile double first_pitch;
-volatile double second_pitch;
-volatile double first_roll;
-volatile double second_roll;
+volatile double previous_pitch;
+volatile double present_pitch;
+volatile double present_roll;
+volatile double previous_roll;
 
 int main (void){
 	system_initialize();
@@ -18,14 +20,16 @@ int main (void){
 		normalize(&acc_readings.raw, &acc_readings.present);		// normalize values to g
 		filter(&acc_readings.present, &acc_readings.previous, &acc_readings.filtered);	// low-pass filter
 		
-		first_pitch = second_pitch;	// first motor responds pitch
-		second_pitch = cal_pitch(&(acc_readings.filtered));		// calculate pitch angle
+		previous_pitch = present_pitch;	// first motor responds pitch
+		present_pitch = cal_pitch(&(acc_readings.filtered));		// calculate pitch angle
 		
-		pitch_angle += (first_pitch-second_pitch);	// accumulate angle
-		rolls[PREVIOUS] = rolls[PRESENT];		// second motor responds roll
-		rolls[PRESENT] = cal_roll(&(acc_readings.filtered));
+		pitch_angle += (present_pitch-previous_pitch);	// accumulate angle
+		previous_roll = present_roll;		// second motor responds roll
+		present_roll = cal_roll(&(acc_readings.filtered));
 		
-		service_angle();
+		roll_angle += (present_roll-previous_roll);
+		service_angle(&pitch_rotation, &pitch_angle, 0, 12.0, 0.6);
+		service_angle(&roll_rotation, &roll_angle, 0, 8.0, 0.6);
 	}			// while
 }
 
@@ -48,35 +52,33 @@ void system_initialize(void){
 	mma8451_read_all_axes(MMA8451_ID, X_AXIS_MSB, &acc_readings.raw);
 	normalize(&acc_readings.raw, &acc_readings.present);
 	filter(&acc_readings.present, &acc_readings.previous, &acc_readings.filtered);
-	second_pitch = cal_pitch(&(acc_readings.filtered));
-	rolls[PRESENT] = cal_roll(&(acc_readings.filtered));
+	present_pitch = cal_pitch(&(acc_readings.filtered));
+	present_roll = cal_roll(&(acc_readings.filtered));
 }
 
-void service_angle(void){
+void service_angle(uint8_t* rotation, double* angle, uint8_t pit_channel, float high_threshold, float low_threshold){
 	if(acc_read != 0x70){		// transmitting 'p' stops displaying data
-			UART0_Transmit_Poll((uint8_t)(pitch_angle));
-			if(pitch_angle > 5.0 && rotation != 1){
-				rotation = 1;
-				PIT->CHANNEL[1].TCTRL &= ~PIT_TCTRL_TEN_MASK;
-				PIT->CHANNEL[0].TCTRL |= PIT_TCTRL_TEN_MASK;
+			UART0_Transmit_Poll((uint8_t)(*angle));
+			if(*angle > high_threshold && *rotation != 1){
+				*rotation = 1;
+				PIT->CHANNEL[pit_channel].TCTRL |= PIT_TCTRL_TEN_MASK;
 			}
-			else if(pitch_angle < -5.0 && rotation != 2){	
-				rotation = 2;
-				PIT->CHANNEL[0].TCTRL &= ~PIT_TCTRL_TEN_MASK;
-				PIT->CHANNEL[1].TCTRL |= PIT_TCTRL_TEN_MASK;
+			else if(*angle < -high_threshold && *rotation != 2){	
+				*rotation = 2;
+				PIT->CHANNEL[pit_channel].TCTRL |= PIT_TCTRL_TEN_MASK;
 			}
-			if(1 == rotation){
-				if(pitch_angle < 0.6){
-					PIT->CHANNEL[0].TCTRL &= ~PIT_TCTRL_TEN_MASK;
-					rotation = 0;
-					turnMotorOff(MOTOR1);
+			if(1 == *rotation){
+				if(*angle < low_threshold){
+					//PIT->CHANNEL[pit_channel].TCTRL &= ~PIT_TCTRL_TEN_MASK;
+					*rotation = 0;
+					//turnMotorOff(MOTOR1);
 				}
 			}
-			else if(2 == rotation){
-				if(pitch_angle > -0.6){
-					PIT->CHANNEL[1].TCTRL &= ~PIT_TCTRL_TEN_MASK;
-					rotation = 0;
-					turnMotorOff(MOTOR1);
+			else if(2 == *rotation){
+				if(*angle > -low_threshold){
+					//PIT->CHANNEL[pit_channel].TCTRL &= ~PIT_TCTRL_TEN_MASK;
+					*rotation = 0;
+					//turnMotorOff(MOTOR1);
 				}
 			}
 		}		// if
